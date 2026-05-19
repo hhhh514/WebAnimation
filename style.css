@@ -311,7 +311,8 @@ body::before {
 .loading-percent {
     position: absolute;
     right: -60px;
-    top: -20px;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 1.2rem;
     font-weight: bold;
     color: rgba(168, 85, 247, 1);
