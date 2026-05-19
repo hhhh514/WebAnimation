@@ -1,5 +1,44 @@
 // 現代互動效果和動畫
 document.addEventListener('DOMContentLoaded', function() {
+    // 加載動畫 - 貓跟著進度條移動
+    const loadingCat = document.getElementById('loadingCat');
+    const loadingProgress = document.querySelector('.loading-progress');
+    const loadingPercent = document.getElementById('loadingPercent');
+    const loadingContainer = document.querySelector('.loading-container');
+    
+    if (loadingCat && loadingProgress && loadingPercent && loadingContainer) {
+        let progress = 0;
+        const containerWidth = loadingContainer.offsetWidth;
+        
+        // 模擬載入進度
+        const loadingInterval = setInterval(() => {
+            // 根據進度增加，逐漸變慢
+            const increment = Math.random() * (100 - progress) / 150;
+            progress += increment;
+            
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loadingInterval);
+                
+                // 載入完成後延遲隱藏
+                setTimeout(() => {
+                    document.querySelector('.loading-animation').style.opacity = '0';
+                    document.querySelector('.loading-animation').style.pointerEvents = 'none';
+                }, 1500);
+            }
+            
+            // 更新進度條寬度
+            loadingProgress.style.width = progress + '%';
+            
+            // 更新百分比文字
+            loadingPercent.textContent = Math.round(progress) + '%';
+            
+            // 更新貓的位置 - 貓在進度條前面
+            const catPosition = (containerWidth * progress / 100) - 40;
+            loadingCat.style.left = catPosition + 'px';
+        }, 30);
+    }
+    
     // 載入動畫
     const observerOptions = {
         threshold: 0.1,
