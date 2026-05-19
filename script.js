@@ -1,288 +1,180 @@
-// 現代互動效果和動畫
-document.addEventListener('DOMContentLoaded', function() {
-    // 加載動畫 - 貓跟著進度條移動
+﻿document.addEventListener('DOMContentLoaded', function() {
     const loadingCat = document.getElementById('loadingCat');
     const loadingProgress = document.querySelector('.loading-progress');
     const loadingPercent = document.getElementById('loadingPercent');
-    const loadingContainer = document.querySelector('.loading-container');
-    
-    if (loadingCat && loadingProgress && loadingPercent && loadingContainer) {
-        let progress = 0;
-        const containerWidth = loadingContainer.offsetWidth;
+    const loadingAnimation = document.querySelector('.loading-animation');
+    const gameScreen = document.getElementById('gameScreen');
+    const gameStage = document.getElementById('gameStage');
+    const gameCat = document.getElementById('gameCat');
+    const feedBtn = document.getElementById('feedBtn');
+
+    let affection = 0;
+    const maxAffection = 100;
+    const totalHearts = 5;   // ← 新增這行
+
+    function updateAffection() {
+        const percent = affection / maxAffection;
+        const heart = document.getElementById('heartLiquid');
+
+        if (!heart) return;
+
+        // 💧 水位（從底部往上）
+        const reveal = 100 - percent * 100;
+        heart.style.clipPath = `inset(${reveal}% 0 0 0)`;
+
+        // 💥 滿格效果
+        if (percent >= 1) {
+            heart.classList.add('full');
+        } else {
+            heart.classList.remove('full');
+        }
+    }
+    function showGameScreen() {
+        loadingAnimation.style.opacity = '0';
+        setTimeout(() => {
+            loadingAnimation.style.display = 'none';
+            gameScreen.classList.remove('hidden');
+            initCatMovement();
+        }, 500);
+    }
+
+    // ==================== 貓咪移動系統 ====================
+    let catX = 200, catY = 150;
+    let isDragging = false;
+    let walkTimer = null;
+    let targetX, targetY;
+
+    function initCatMovement() {
+        const rect = gameStage.getBoundingClientRect();
+        catX = rect.width / 2 - 60;
+        catY = rect.height / 2 - 45;
         
-        // 模擬載入進度
+        gameCat.style.left = catX + 'px';
+        gameCat.style.top = catY + 'px';
+        gameCat.style.transform = 'none'; 
+
+        setRandomTarget();
+        walkTimer = setInterval(() => {
+            if (!isDragging) setRandomTarget();
+        }, 2500);
+
+        requestAnimationFrame(animateCat);
+    }
+
+    function setRandomTarget() {
+        const rect = gameStage.getBoundingClientRect();
+        targetX = Math.random() * (rect.width - 120) + 30;
+        targetY = Math.random() * (rect.height - 120) + 30;
+    }
+
+    function animateCat() {
+        if (!isDragging) {
+            const dx = targetX - catX;
+            const dy = targetY - catY;
+            const smooth = 0.006;
+
+            catX += dx * smooth;
+            catY += dy * smooth;
+
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 2) {
+                gameStage.classList.remove('walking');
+            } else {
+                gameStage.classList.add('walking');
+            }
+
+            // 邊界限制
+            if (catX < 20) { catX = 20; targetX = catX + 80; }
+            if (catX > gameStage.offsetWidth - 100) { 
+                catX = gameStage.offsetWidth - 100; 
+                targetX = catX - 80; 
+            }
+            if (catY < 20) { catY = 20; targetY = catY + 80; }
+            if (catY > gameStage.offsetHeight - 100) { 
+                catY = gameStage.offsetHeight - 100; 
+                targetY = catY - 80; 
+            }
+
+            gameCat.style.left = catX + 'px';
+            gameCat.style.top = catY + 'px';
+        }
+
+        requestAnimationFrame(animateCat);
+    }
+
+    // ==================== 拖曳功能 ====================
+    function startDrag(e) {
+        isDragging = true;
+        gameStage.classList.remove('walking');
+        gameCat.style.transition = 'none';
+    }
+
+    function onDrag(e) {
+        if (!isDragging) return;
+        
+        const rect = gameStage.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        catX = clientX - rect.left - 60;
+        catY = clientY - rect.top - 45;
+
+        catX = Math.max(20, Math.min(catX, rect.width - 100));
+        catY = Math.max(20, Math.min(catY, rect.height - 100));
+
+        gameCat.style.left = catX + 'px';
+        gameCat.style.top = catY + 'px';
+    }
+
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        gameCat.style.transition = 'transform 0.1s ease';
+        setRandomTarget();
+    }
+
+    // 事件綁定
+    gameCat.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', onDrag);
+    window.addEventListener('mouseup', endDrag);
+
+    gameCat.addEventListener('touchstart', (e) => { e.preventDefault(); startDrag(e); });
+    window.addEventListener('touchmove', (e) => { e.preventDefault(); onDrag(e); });
+    window.addEventListener('touchend', endDrag);
+
+    // ==================== 餵食按鈕 ====================
+    feedBtn.addEventListener('click', () => {
+        if (affection < maxAffection) {
+            affection = Math.min(maxAffection, affection + 10);
+            updateAffection();
+
+            gameCat.classList.add('feed-bounce');
+            setTimeout(() => {
+                gameCat.classList.remove('feed-bounce');
+            }, 500);
+        }
+    });
+
+    // ==================== 載入動畫 ====================
+    if (loadingCat && loadingProgress && loadingPercent) {
+        let progress = 0;
+        const containerWidth = 400;
+
         const loadingInterval = setInterval(() => {
-            // 根據進度增加，逐漸變慢
-            const increment = Math.random() * (100 - progress) / 150;
-            progress += increment;
-            
+            progress += Math.max(1, Math.random() * 3);
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(loadingInterval);
-                
-                // 載入完成後延遲隱藏
-                setTimeout(() => {
-                    document.querySelector('.loading-animation').style.opacity = '0';
-                    document.querySelector('.loading-animation').style.pointerEvents = 'none';
-                }, 1500);
+                setTimeout(showGameScreen, 400);
             }
-            
-            // 更新進度條寬度
+
             loadingProgress.style.width = progress + '%';
-            
-            // 更新百分比文字
             loadingPercent.textContent = Math.round(progress) + '%';
-            
-            // 更新貓的位置 - 貓在進度條前面
-            const catPosition = (containerWidth * progress / 100) - 40;
-            loadingCat.style.left = catPosition + 'px';
+
+            const catPos = (containerWidth * progress / 100) - 40;
+            loadingCat.style.left = Math.max(0, catPos) + 'px';
         }, 30);
     }
-    
-    // 載入動畫
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    // 觀察所有 section
-    document.querySelectorAll('.section').forEach(section => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(section);
-    });
-
-    // 平滑滾動到錨點
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-
-    // 登入表單提交
-    const loginForm = document.querySelector('.login-form');
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // 模擬載入狀態
-        const submitBtn = this.querySelector('.login-btn');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = '登入中...';
-        submitBtn.disabled = true;
-
-        // 模擬 API 呼叫
-        setTimeout(() => {
-            alert('登入成功！歡迎回來。');
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }, 2000);
-    });
-
-    // 表單提交
-    const demoForm = document.querySelector('.form-demo');
-    demoForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // 表單驗證
-        const requiredFields = this.querySelectorAll('input[required]');
-        let isValid = true;
-
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                field.style.borderColor = '#ff6b6b';
-                isValid = false;
-            } else {
-                field.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            }
-        });
-
-        if (isValid) {
-            alert('表單提交成功！感謝您的參與。');
-            this.reset();
-        } else {
-            alert('請填寫所有必填欄位。');
-        }
-    });
-
-    // 按鈕點擊動畫效果
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(btn => {
-        if (!btn.disabled) {
-            btn.addEventListener('click', function() {
-                // 添加波紋效果
-                const ripple = document.createElement('span');
-                ripple.style.position = 'absolute';
-                ripple.style.borderRadius = '50%';
-                ripple.style.background = 'rgba(255, 255, 255, 0.6)';
-                ripple.style.transform = 'scale(0)';
-                ripple.style.animation = 'ripple 0.6s linear';
-                ripple.style.left = '50%';
-                ripple.style.top = '50%';
-                ripple.style.width = '20px';
-                ripple.style.height = '20px';
-                ripple.style.marginLeft = '-10px';
-                ripple.style.marginTop = '-10px';
-
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        }
-    });
-
-    // 添加波紋動畫
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // 滑鼠追蹤效果 (3D 互動)
-    document.addEventListener('mousemove', function(e) {
-        const cards = document.querySelectorAll('.button-group, .card-item');
-        cards.forEach(card => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 10;
-                const rotateY = (centerX - x) / 10;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-            } else {
-                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-            }
-        });
-    });
-
-    // 鍵盤導航增強
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && e.target.tagName === 'BUTTON') {
-            e.target.click();
-        }
-    });
-
-    // 表單輸入增強
-    const inputs = document.querySelectorAll('input, textarea, select');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.classList.add('focused');
-        });
-
-        input.addEventListener('blur', function() {
-            this.parentElement.classList.remove('focused');
-        });
-
-        // 即時驗證
-        input.addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.style.borderColor = 'rgba(168, 85, 247, 0.5)';
-            } else {
-                this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            }
-        });
-    });
-
-    // 載入完成動畫
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
-
-    // 添加載入樣式
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
-
-    // ===== 新增功能 =====
-
-    // 模態窗口功能
-    window.openModal = function() {
-        const modal = document.getElementById('modalOverlay');
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    };
-
-    window.closeModal = function() {
-        const modal = document.getElementById('modalOverlay');
-        modal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    };
-
-    // ESC 鍵關閉模態
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeModal();
-        }
-    });
-
-    // 標籤頁切換
-    window.switchTab = function(index) {
-        // 移除所有活躍狀態
-        const headers = document.querySelectorAll('.tab-header');
-        const contents = document.querySelectorAll('.tab-content');
-
-        headers.forEach(h => h.classList.remove('active'));
-        contents.forEach(c => c.classList.remove('active'));
-
-        // 添加新的活躍狀態
-        headers[index].classList.add('active');
-        contents[index].classList.add('active');
-    };
-
-    // 手風琴切換
-    window.toggleAccordion = function(button) {
-        const item = button.closest('.accordion-item');
-        const content = item.querySelector('.accordion-content');
-
-        // 檢查是否已經打開
-        const isActive = item.classList.contains('active');
-
-        // 如果已打開，則關閉；否則打開
-        if (isActive) {
-            item.classList.remove('active');
-        } else {
-            // 可選：同時只打開一個手風琴項
-            // document.querySelectorAll('.accordion-item').forEach(acc => {
-            //     acc.classList.remove('active');
-            // });
-            item.classList.add('active');
-        }
-    };
-
-    // 導航菜單在行動裝置上的切換
-    const navToggle = document.querySelector('.navbar-toggle');
-    if (navToggle) {
-        navToggle.addEventListener('click', function() {
-            const navMenu = document.querySelector('.navbar-menu');
-            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
-        });
-    }
+    updateAffection();
 });
