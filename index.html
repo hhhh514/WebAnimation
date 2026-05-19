@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現代 UI 設計展示</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>現代 UI 設計</h1>
+                <p>探索當代網頁設計的精髓，體驗創新互動與視覺美學的完美融合</p>
+                <a href="#buttons" class="cta-button">開始探索</a>
+            </div>
+            <div class="scroll-indicator"></div>
+        </section>
+
+        <section id="buttons" class="section">
+            <h2>按鈕設計系統</h2>
+            <div class="buttons-grid">
+                <div class="button-group">
+                    <h3>主要動作</h3>
+                    <button class="btn btn-primary">主要按鈕</button>
+                    <button class="btn btn-secondary">次要按鈕</button>
+                    <button class="btn btn-success">成功按鈕</button>
+                </div>
+                <div class="button-group">
+                    <h3>輪廓樣式</h3>
+                    <button class="btn btn-outline">輪廓按鈕</button>
+                    <button class="btn btn-outline btn-rounded">圓角輪廓</button>
+                </div>
+                <div class="button-group">
+                    <h3>尺寸變化</h3>
+                    <button class="btn btn-primary">標準尺寸</button>
+                    <button class="btn btn-primary btn-large">大型按鈕</button>
+                </div>
+                <div class="button-group">
+                    <h3>狀態展示</h3>
+                    <button class="btn btn-primary" disabled>禁用狀態</button>
+                    <button class="btn btn-success">啟用狀態</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="login" class="section">
+            <h2>登入體驗設計</h2>
+            <div class="login-container">
+                <form class="login-form">
+                    <h3>歡迎回來</h3>
+                    <div class="form-group">
+                        <label for="email">電子郵件地址</label>
+                        <input type="email" id="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密碼</label>
+                        <input type="password" id="password" placeholder="輸入您的密碼" required>
+                    </div>
+                    <button type="submit" class="login-btn">登入帳戶</button>
+                    <div class="login-links">
+                        <a href="#">忘記密碼？</a>
+                        <a href="#">建立新帳戶</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <section id="navigation" class="section">
+            <h2>導航設計系統</h2>
+            <nav class="navbar">
+                <div class="navbar-brand">Logo</div>
+                <ul class="navbar-menu">
+                    <li><a href="#">首頁</a></li>
+                    <li><a href="#">服務</a></li>
+                    <li><a href="#">作品集</a></li>
+                    <li><a href="#">關於</a></li>
+                    <li><a href="#">聯絡</a></li>
+                </ul>
+                <div class="navbar-toggle">☰</div>
+            </nav>
+        </section>
+
+        <section id="cards" class="section">
+            <h2>卡片設計系統</h2>
+            <div class="cards-grid">
+                <div class="card-item">
+                    <div class="card-image"></div>
+                    <h3>卡片標題</h3>
+                    <p>這是一個美麗的卡片設計，展示了現代的視覺層次和互動效果。</p>
+                    <a href="#" class="card-link">了解更多 →</a>
+                </div>
+                <div class="card-item">
+                    <div class="card-image"></div>
+                    <h3>設計創新</h3>
+                    <p>結合了微妙的陰影、過渡動畫和響應式佈局的完美組合。</p>
+                    <a href="#" class="card-link">探索更多 →</a>
+                </div>
+                <div class="card-item">
+                    <div class="card-image"></div>
+                    <h3>使用者體驗</h3>
+                    <p>每個細節都經過精心設計，以提供最佳的使用者體驗。</p>
+                    <a href="#" class="card-link">查看詳情 →</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="modals" class="section">
+            <h2>彈出視窗設計</h2>
+            <div class="modal-demo-container">
+                <button class="btn btn-primary btn-large" onclick="openModal()">打開模態窗口</button>
+            </div>
+
+            <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+                <div class="modal" onclick="event.stopPropagation()">
+                    <div class="modal-header">
+                        <h2>歡迎使用</h2>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>這是一個現代化的模態窗口設計。</p>
+                        <p>它展示了如何以優雅和實用的方式呈現重要信息。</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                        <button class="btn btn-primary" onclick="closeModal()">確認</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tabs" class="section">
+            <h2>標籤頁設計</h2>
+            <div class="tabs-container">
+                <div class="tabs-headers">
+                    <button class="tab-header active" onclick="switchTab(0)">標籤一</button>
+                    <button class="tab-header" onclick="switchTab(1)">標籤二</button>
+                    <button class="tab-header" onclick="switchTab(2)">標籤三</button>
+                </div>
+                <div class="tabs-content">
+                    <div class="tab-content active">
+                        <h3>標籤一內容</h3>
+                        <p>這是第一個標籤頁的內容。使用平滑的過渡動畫切換標籤。</p>
+                    </div>
+                    <div class="tab-content">
+                        <h3>標籤二內容</h3>
+                        <p>這是第二個標籤頁的內容。提供了一個簡潔的信息組織方式。</p>
+                    </div>
+                    <div class="tab-content">
+                        <h3>標籤三內容</h3>
+                        <p>這是第三個標籤頁的內容。所有標籤都具有一致的設計語言。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="accordion" class="section">
+            <h2>手風琴設計</h2>
+            <div class="accordion-container">
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>第一項</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>這是第一個手風琴項目的內容。點擊標題來展開或收起內容。</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>第二項</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>這是第二個手風琴項目的內容。平滑地展開和收起。</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>第三項</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>這是第三個手風琴項目的內容。完全可定制的設計。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="forms" class="section">
+            <h2>表單設計系統</h2>
+            <form class="form-demo">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstname">名字</label>
+                        <input type="text" id="firstname" placeholder="您的名字">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">姓氏</label>
+                        <input type="text" id="lastname" placeholder="您的姓氏">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email-form">電子郵件</label>
+                    <input type="email" id="email-form" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="country">國家/地區</label>
+                    <select id="country">
+                        <option value="">選擇國家</option>
+                        <option value="tw">台灣</option>
+                        <option value="us">美國</option>
+                        <option value="jp">日本</option>
+                        <option value="kr">韓國</option>
+                        <option value="cn">中國</option>
+                        <option value="sg">新加坡</option>
+                    </select>
+                </div>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="gender" value="male"> 男
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="female"> 女
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="other"> 其他
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="prefer-not"> 不願透露
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletter">
+                    <label for="newsletter">訂閱我們的電子報，獲取最新設計趨勢</label>
+                </div>
+                <div class="form-group">
+                    <label for="message">您的訊息</label>
+                    <textarea id="message" placeholder="請分享您的想法或問題..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">送出表單</button>
+            </form>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
