@@ -1,4 +1,40 @@
-﻿document.addEventListener('DOMContentLoaded', function() {
+﻿window.openModal = () => {
+    document.getElementById("modalOverlay").classList.add("active");
+};
+
+window.closeModal = () => {
+    document.getElementById("modalOverlay").classList.remove("active");
+};
+window.switchTab = function (index) {
+    const headers = document.querySelectorAll('.tab-header');
+    const contents = document.querySelectorAll('.tab-content');
+
+    headers.forEach(h => h.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+
+    headers[index].classList.add('active');
+    contents[index].classList.add('active');
+};
+window.toggleAccordion = function (btn) {
+    const item = btn.parentElement;
+    const content = item.querySelector('.accordion-content');
+    const icon = item.querySelector('.accordion-icon');
+
+    const isOpen = item.classList.contains('active');
+
+    document.querySelectorAll('.accordion-item').forEach(el => {
+        el.classList.remove('active');
+        el.querySelector('.accordion-content').style.maxHeight = null;
+        el.querySelector('.accordion-icon').textContent = '+';
+    });
+
+    if (!isOpen) {
+        item.classList.add('active');
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon.textContent = '−';
+    }
+};
+document.addEventListener('DOMContentLoaded', function() {
     const loadingCat = document.getElementById('loadingCat');
     const loadingProgress = document.querySelector('.loading-progress');
     const loadingPercent = document.getElementById('loadingPercent');
@@ -11,7 +47,6 @@
     let affection = 0;
     const maxAffection = 100;
     const totalHearts = 5;   // ← 新增這行
-
     function updateAffection() {
         const percent = affection / maxAffection;
         const heart = document.getElementById('heartLiquid');
@@ -175,6 +210,22 @@
             loadingCat.style.left = Math.max(0, catPos) + 'px';
         }, 30);
     }
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const toggleIcon = document.getElementById('toggleIcon');
+    sidebar.classList.add('collapsed');
+    toggleIcon.textContent = '▶';
+    sidebarToggle.addEventListener('click', () => {
+
+        sidebar.classList.toggle('collapsed');
+
+        if (sidebar.classList.contains('collapsed')) {
+            toggleIcon.textContent = '▶'; // 打開
+        } else {
+            toggleIcon.textContent = '◀'; // 關閉
+        }
+    });
 
     updateAffection();
-});
+    
+}); 
